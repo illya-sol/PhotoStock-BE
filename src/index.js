@@ -2,6 +2,7 @@ const express = require('express');
 const bodyparser = require('body-parser');
 const reqId = require('express-request-id');
 const morgan = require('morgan');
+const cors = require('cors');
 
 conf = require('./env.conf');
 const userRouter = require('./users/routes.config');
@@ -23,12 +24,17 @@ app.use(morgan(format,{
   stream: process.stdout
 }))
 
+app.use(cors());
+
 app.use((req, res, next) => {
-    res.header('Access-Control-Allow-Origin', 'http://localhost:3000');
+    res.header('Access-Control-Allow-Origin', '*');
     res.header('Access-Control-Allow-Credentials', 'true');
     res.header('Access-Control-Allow-Methods', 'GET,HEAD,PUT,PATCH,POST,DELETE');
     res.header('Access-Control-Expose-Headers', 'Content-Length');
     res.header('Access-Control-Allow-Headers', 'Accept, Authorization, Content-Type, X-Requested-With, Range');
+    if(req.method === 'OPTIONS')
+      return res.sendStatus(200);
+    else
       return next();
 })
 
