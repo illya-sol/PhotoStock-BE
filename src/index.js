@@ -1,5 +1,7 @@
 const express = require('express');
 const bodyparser = require('body-parser');
+const reqId = require('express-request-id');
+const morgan = require('morgan');
 
 conf = require('./env.conf');
 const userRouter = require('./users/routes.config');
@@ -7,6 +9,19 @@ const authRouter = require('./auth/routes.config');
 const unsplashRouter = require('./unsplash/routes.config');
 
 var app = express();
+var format = '[:date[web]] :method ":url" :status :response-time';
+
+app.use(reqId());
+morgan.token('id', req => { return req.id });
+
+app.use(morgan(format, {
+  skip: (req, res) => { return res.statusCode < 400 },
+  stream: process.stderr
+}));
+app.use(morgan(format,{
+  skip: (req, res) => { return res.statusCode >= 400 },
+  stream: process.stdout
+}))
 
 app.use((req, res, next) => {
     res.header('Access-Control-Allow-Origin', '*');

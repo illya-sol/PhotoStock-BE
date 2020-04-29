@@ -5,6 +5,7 @@ const ValidationMiddleware = require('../common/verify.middleware');
 const HasPerm = require('../common/Permission');
 
 exports.Route = function(app){
+
   app.post('/users',[
     VerifyMiddleware.HasValidFields,
     UserController.insert
@@ -26,4 +27,6 @@ exports.Route = function(app){
     HasPerm.CanEdit,
     UserController.delete
   ]);
+
+    app.get('/users/search/:username', UserController.findbyname);
 }
