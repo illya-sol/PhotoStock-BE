@@ -3,8 +3,9 @@
   "version": "1.0.0",
   "description": "",
   "main": "src/index.js",
+  "web": "src/index.js",
   "scripts": {
-    "start": "node index.js"
+    "start": "node src/index.js"
   },
   "author": "",
   "license": "ISC",
