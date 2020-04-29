@@ -1,5 +1,5 @@
 module.exports = {
-  "port": 3001,
+  "port": process.env.PORT,
   "jwt_secret": "secr33t",
   "jwt_expires": 36000,
   "uAccess": "36442df883ce3518400cd6363d24975e39b80cbb98ab1ce3366c677c827c5895",
