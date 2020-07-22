@@ -1,0 +1,3 @@
+node_modules
+src/env.conf.js
+src/app.js
