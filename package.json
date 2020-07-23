@@ -4,8 +4,7 @@
   "description": "",
   "main": "src/app.js",
   "scripts": {
-    "start": "ts-node ./src/app.ts",
-    "start:watch": "nodemon",
+    "start": "ts-node-dev ./src/app.ts --no-notify",
     "build": "tsc",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -17,21 +16,9 @@
     "@types/node": "^14.0.24",
     "nodemon": "^2.0.4",
     "ts-node": "^8.10.2",
+    "ts-node-dev": "^1.0.0-pre.53",
     "tslint": "^5.12.1",
     "typescript": "^3.3.3"
-  },
-  "nodemonConfig": {
-    "ignore": [
-      "**/*.test.ts",
-      "**/*.spec.ts",
-      ".git",
-      "node_modules"
-    ],
-    "watch": [
-      "src"
-    ],
-    "exec": "yarn start",
-    "ext": "ts"
   },
   "dependencies": {
     "apollo-server-express": "^2.16.0",
@@ -41,6 +28,7 @@
     "eslint-plugin-import": "^2.22.0",
     "express": "^4.17.1",
     "graphql": "^15.3.0",
+    "jsonwebtoken": "^8.5.1",
     "pg": "^8.3.0",
     "reflect-metadata": "^0.1.13",
     "type-graphql": "^1.0.0-rc.3",

@@ -1,9 +1,9 @@
+import { ApolloServer } from 'apollo-server-express';
+import Express from 'express';
 import "reflect-metadata";
-import Express from 'express'
 import { buildSchema } from "type-graphql";
-import { User, UserResolver } from './schema/schema'
-import { ApolloServer, gql } from 'apollo-server-express'
 import { createConnection } from "typeorm";
+import { UserResolver } from './modules/user/register';
 
 const main = async () => {
     await createConnection();
@@ -14,8 +14,8 @@ const main = async () => {
     const app = Express()
 
     apolloServer.applyMiddleware({ app })
-    app.listen(env.port, (err:string) => {
-        if(err)
+    app.listen(env.port, (err: string) => {
+        if (err)
             console.log(err)
         console.log('Express apollo server started at port ' + env.port)
     })
