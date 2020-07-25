@@ -1,26 +1,29 @@
 import { ApolloServer } from 'apollo-server-express';
 import connectRedis from 'connect-redis';
 import cors from 'cors';
-import Express from 'express';
+import express from 'express';
 import session from 'express-session';
 import "reflect-metadata";
 import { buildSchema } from "type-graphql";
 import { createConnection } from "typeorm";
-import { LoginResolver } from './modules/user/login';
-import { RegisterResolver } from './modules/user/register';
-import { UserResolver } from './modules/user/user';
+import { resolvers } from './modules/user/userResolvers';
 import { redis } from './redis';
 
 const main = async () => {
     await createConnection();
 
     const env = require('./env.conf')
-    const schema = await buildSchema({ resolvers: [RegisterResolver, LoginResolver, UserResolver] })
+    const schema = await buildSchema({
+        resolvers: resolvers,
+        // authChecker: ({} =>{
+
+        // })
+    })
     const apolloServer = new ApolloServer({
         schema,
         context: ({ req }) => ({ req })
     })
-    const app = Express()
+    const app = express()
     const RedisStore = connectRedis(session)
 
     const sessionOption: session.SessionOptions = {
