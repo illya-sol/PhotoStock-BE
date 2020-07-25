@@ -1,27 +1,20 @@
-import crypto from 'crypto';
-import { Arg, Mutation, Query, Resolver } from 'type-graphql';
+import bcrypt from 'bcryptjs';
+import { Arg, Mutation, Resolver } from 'type-graphql';
 import { User } from '../../entity/users';
-import { RegisterInput } from '../register/registerinput';
+import { RegisterInput } from './register/registerinput';
 
 @Resolver()
-export class UserResolver {
-    @Query(() => String)
-    async hello() {
-        return await "hello-wrlddddd";
-    }
+export class RegisterResolver {
 
     @Mutation(() => User)
     async register(
         @Arg("data") { username, email, password }: RegisterInput,
     ): Promise<User> {
-        const salt: string = crypto.randomBytes(16).toString('base64')
-        const hash: string = crypto.createHmac('sha512', salt).update(password).digest('base64')
-
-        password = salt + '$' + hash
+        const hashPassword = await bcrypt.hash(password, 12);
 
         const user = await User.create({
             username,
-            password,
+            password: hashPassword,
             email
         }).save()
 
