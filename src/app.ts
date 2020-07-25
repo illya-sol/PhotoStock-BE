@@ -6,6 +6,7 @@ import session from 'express-session';
 import "reflect-metadata";
 import { buildSchema } from "type-graphql";
 import { createConnection } from "typeorm";
+import { userauthChecker } from './modules/auth/auth';
 import { resolvers } from './modules/user/userResolvers';
 import { redis } from './redis';
 
@@ -15,9 +16,7 @@ const main = async () => {
     const env = require('./env.conf')
     const schema = await buildSchema({
         resolvers: resolvers,
-        // authChecker: ({} =>{
-
-        // })
+        authChecker: userauthChecker
     })
     const apolloServer = new ApolloServer({
         schema,

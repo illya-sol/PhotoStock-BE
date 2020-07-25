@@ -1,17 +1,16 @@
 import bcrypt from 'bcryptjs';
-import { Arg, Ctx, Mutation, Query, Resolver } from 'type-graphql';
+import { Arg, Authorized, Ctx, Mutation, Query, Resolver } from 'type-graphql';
 import { User } from '../../entity/users';
 import { reqContext } from '../types/context';
 import { RegisterInput } from './register/registerinput';
 
 @Resolver()
 class UserResolver {
+    @Authorized()
     @Query(() => User, { nullable: true })
     async User(
         @Ctx() ctx: reqContext
     ): Promise<User | undefined> {
-        if (!ctx.req.session!.userId)
-            return undefined
         return User.findOne(ctx.req.session!.userId);
     }
 }
