@@ -2,8 +2,9 @@ import bcrypt from 'bcryptjs'
 import { Arg, Authorized, Ctx, Mutation, Query, Resolver } from 'type-graphql'
 import { User } from '../../entity/users'
 import { redis } from '../../redis'
-import { createConfirmationUrl } from '../../utils/generateConfirmationUrl'
+import { createConfirmationUrl, createForgotPasswordUrl } from '../../utils/generateUrls'
 import { sendEmail } from '../../utils/sendEmail'
+import { confirmPrefix, forgotPasswordPrefix } from '../constants/redisPrefixes'
 import { reqContext } from '../types/context'
 import { RegisterInput } from './register/registerinput'
 
@@ -33,7 +34,7 @@ class RegisterResolver {
             email
         }).save()
 
-        await sendEmail(email, await createConfirmationUrl(user.id))
+        await sendEmail(email, true, await createConfirmationUrl(user.id))
 
         return user
     }
@@ -80,10 +81,11 @@ class ConfirmUserResolver {
     async confirmUser(
         @Arg("token") token: string
     ): Promise<Boolean> {
-        const userid = await redis.get(token);
+        const userid = await redis.get(confirmPrefix + token);
 
         if (!userid)
             return false
+
         await User.update({ id: userid as any }, { confirmed: true })
         await redis.del(token)
 
@@ -91,4 +93,47 @@ class ConfirmUserResolver {
     }
 }
 
-export const resolvers = [UserResolver, ConfirmUserResolver, LoginResolver, RegisterResolver] as const
+@Resolver()
+class ForgotUserPasswordResolver {
+    @Mutation(() => Boolean)
+    async forgotPassword(
+        @Arg("email") email: string
+    ): Promise<Boolean> {
+        const user = await User.findOne({ where: { email } })
+
+        if (!user)
+            return true
+
+        await sendEmail(user.email, false, await createForgotPasswordUrl(user.id))
+
+        return true
+    }
+}
+
+@Resolver()
+class ChangePasswordResolver {
+    @Mutation(() => User, { nullable: true })
+    async resetPassword(
+        @Arg("token") token: string,
+        @Arg("password") password: string
+    ): Promise<User | null> {
+        const userId = await redis.get(forgotPasswordPrefix + token)
+
+        if (!userId)
+            return null
+
+        const user = await User.findOne(userId)
+
+        if (!user)
+            return null
+
+        await redis.del(token)
+
+        user.password = await bcrypt.hash(password, 12)
+        await user.save()
+
+        return user
+    }
+}
+
+export const resolvers = [UserResolver, ChangePasswordResolver, ForgotUserPasswordResolver, ConfirmUserResolver, LoginResolver, RegisterResolver] as const

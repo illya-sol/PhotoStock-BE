@@ -5,7 +5,7 @@ import nodemailer from 'nodemailer';
 import path from 'path';
 const env = require('../env.conf')
 
-export const sendEmail = async (email: string, url: string) => {
+export const sendEmail = async (email: string, isEmail: boolean, url: string) => {
 
     const transporter = nodemailer.createTransport({
         service: "gmail",
@@ -14,8 +14,12 @@ export const sendEmail = async (email: string, url: string) => {
             pass: env.emailPassword,
         },
     })
+    let htmlDOM
 
-    let htmlDOM = new JSDOM(await fs.promises.readFile(path.join(__dirname, '../public/confEmail.html'), 'utf8'))
+    if (isEmail)
+        htmlDOM = new JSDOM(await fs.promises.readFile(path.join(__dirname, '../public/confEmail.html'), 'utf8'))
+    else
+        htmlDOM = new JSDOM(await fs.promises.readFile(path.join(__dirname, '../public/forgotPassword.html'), 'utf8'))
 
     let atag = htmlDOM.window.document.getElementById('button_link') as HTMLAnchorElement
     let ptag = htmlDOM.window.document.getElementById('text_link') as HTMLParagraphElement
@@ -26,7 +30,7 @@ export const sendEmail = async (email: string, url: string) => {
     const options = {
         from: env.emailLogin,
         to: email,
-        subject: "Confirm Email ✔",
+        subject: isEmail ? "Confirm Email ✔" : "Forgot Password ❓",
         html: htmlDOM.window.document.body.innerHTML
     }
 
