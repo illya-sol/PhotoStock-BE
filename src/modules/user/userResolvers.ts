@@ -6,7 +6,9 @@ import { createConfirmationUrl, createForgotPasswordUrl } from '../../utils/gene
 import { sendEmail } from '../../utils/sendEmail'
 import { confirmPrefix, forgotPasswordPrefix } from '../constants/redisPrefixes'
 import { reqContext } from '../types/context'
-import { RegisterInput } from './register/registerinput'
+import { changePasswordInput } from './inputs/changePasswordInput'
+import { LoginInput } from './inputs/loginInput'
+import { RegisterInput } from './inputs/registerInput'
 
 @Resolver()
 class UserResolver {
@@ -45,10 +47,8 @@ class LoginResolver {
 
     @Mutation(() => User, { nullable: true })
     async login(
-        @Arg("password") hashPassword: string,
+        @Arg("data") { username, email, password }: LoginInput,
         @Ctx() ctx: reqContext,
-        @Arg("username", { nullable: true }) username?: string,
-        @Arg("email", { nullable: true }) email?: string
     ): Promise<User | null> {
 
         let user
@@ -61,7 +61,7 @@ class LoginResolver {
         if (!user)
             return null
 
-        const IsPasswordValid = await bcrypt.compare(hashPassword, user.password)
+        const IsPasswordValid = await bcrypt.compare(password, user.password)
 
         if (!IsPasswordValid)
             return null
@@ -114,8 +114,8 @@ class ForgotUserPasswordResolver {
 class ChangePasswordResolver {
     @Mutation(() => User, { nullable: true })
     async resetPassword(
-        @Arg("token") token: string,
-        @Arg("password") password: string
+        @Arg("data") { token, password }: changePasswordInput,
+        @Ctx() ctx: reqContext
     ): Promise<User | null> {
         const userId = await redis.get(forgotPasswordPrefix + token)
 
@@ -131,6 +131,8 @@ class ChangePasswordResolver {
 
         user.password = await bcrypt.hash(password, 12)
         await user.save()
+
+        ctx.req.session!.userId = user.id
 
         return user
     }
