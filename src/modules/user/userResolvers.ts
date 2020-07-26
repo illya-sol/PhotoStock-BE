@@ -1,8 +1,11 @@
-import bcrypt from 'bcryptjs';
-import { Arg, Authorized, Ctx, Mutation, Query, Resolver } from 'type-graphql';
-import { User } from '../../entity/users';
-import { reqContext } from '../types/context';
-import { RegisterInput } from './register/registerinput';
+import bcrypt from 'bcryptjs'
+import { Arg, Authorized, Ctx, Mutation, Query, Resolver } from 'type-graphql'
+import { User } from '../../entity/users'
+import { redis } from '../../redis'
+import { createConfirmationUrl } from '../../utils/generateConfirmationUrl'
+import { sendEmail } from '../../utils/sendEmail'
+import { reqContext } from '../types/context'
+import { RegisterInput } from './register/registerinput'
 
 @Resolver()
 class UserResolver {
@@ -11,7 +14,7 @@ class UserResolver {
     async User(
         @Ctx() ctx: reqContext
     ): Promise<User | undefined> {
-        return User.findOne(ctx.req.session!.userId);
+        return User.findOne(ctx.req.session!.userId)
     }
 }
 
@@ -29,6 +32,8 @@ class RegisterResolver {
             password: hashPassword,
             email
         }).save()
+
+        await sendEmail(email, await createConfirmationUrl(user.id))
 
         return user
     }
@@ -55,15 +60,35 @@ class LoginResolver {
         if (!user)
             return null
 
-        const IsPasswordValid = await bcrypt.compare(hashPassword, user.password);
+        const IsPasswordValid = await bcrypt.compare(hashPassword, user.password)
 
         if (!IsPasswordValid)
             return null
 
-        ctx.req.session!.userId = user.id;
+        if (!user.confirmed)
+            return null;
+
+        ctx.req.session!.userId = user.id
 
         return user
     }
 }
 
-export const resolvers = [UserResolver, LoginResolver, RegisterResolver] as const;
+@Resolver()
+class ConfirmUserResolver {
+    @Mutation(() => Boolean)
+    async confirmUser(
+        @Arg("token") token: string
+    ): Promise<Boolean> {
+        const userid = await redis.get(token);
+
+        if (!userid)
+            return false
+        await User.update({ id: userid as any }, { confirmed: true })
+        await redis.del(token)
+
+        return true
+    }
+}
+
+export const resolvers = [UserResolver, ConfirmUserResolver, LoginResolver, RegisterResolver] as const

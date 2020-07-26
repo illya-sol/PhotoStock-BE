@@ -12,7 +12,7 @@ export class IsEmailAlreadyExistConstraint
     implements ValidatorConstraintInterface {
     validate(email: string) {
         return User.findOne({ where: { email } }).then(user => {
-            if (user) return false;
+            if (user) return false
             return true;
         })
     }
@@ -23,8 +23,8 @@ export class IsUserAlreadyExistConstraint
     implements ValidatorConstraintInterface {
     validate(username: string) {
         return User.findOne({ where: { username } }).then(user => {
-            if (user) return false;
-            return true;
+            if (user) return false
+            return true
         })
     }
 }
