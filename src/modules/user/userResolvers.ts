@@ -50,7 +50,6 @@ class LoginResolver {
         @Arg("data") { username, email, password }: LoginInput,
         @Ctx() ctx: reqContext,
     ): Promise<User | null> {
-
         let user
 
         if (username)
@@ -138,4 +137,20 @@ class ChangePasswordResolver {
     }
 }
 
-export const resolvers = [UserResolver, ChangePasswordResolver, ForgotUserPasswordResolver, ConfirmUserResolver, LoginResolver, RegisterResolver] as const
+@Resolver()
+export class LogoutResolver {
+    @Mutation(() => Boolean)
+    async logout(@Ctx() ctx: reqContext): Promise<Boolean> {
+        return new Promise((res, rej) => {
+            ctx.req.session!.destroy((err) => {
+                if (err) {
+                    console.log(err)
+                    rej(false)
+                }
+                res(true)
+            })
+        })
+    }
+}
+
+export const resolvers = [UserResolver, LogoutResolver, ChangePasswordResolver, ForgotUserPasswordResolver, ConfirmUserResolver, LoginResolver, RegisterResolver] as const
