@@ -22,6 +22,7 @@ export const graphCall = async ({ source, variableValues, userId }: Options) => 
         contextValue: {
             req: {
                 session: {
+                    destroy: jest.fn((callback) => { callback() }),
                     userId: userId
                 }
             },

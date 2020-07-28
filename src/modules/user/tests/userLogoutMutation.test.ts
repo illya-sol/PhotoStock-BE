@@ -15,49 +15,32 @@ afterAll(async () => {
     await connection.close()
 })
 
-const userQuery = `
-{
-  User {
-    id
-    username
-    email
-  }
+const loginMutation = `
+mutation {
+  logout
 }
 `;
 
-describe("User", () => {
-    it("get user", async () => {
+describe("Logout", () => {
+    it("logout user", async () => {
+        const password = faker.internet.password()
         const user = await User.create({
             username: faker.internet.userName(),
             email: faker.internet.email(),
-            password: await bcrypt.hash(faker.internet.password(), 12)
+            password: await bcrypt.hash(password, 12),
+            confirmed: true
         }).save()
 
         const response = await graphCall({
-            source: userQuery,
+            source: loginMutation,
             userId: user.id
         })
 
         expect(response).toMatchObject({
             data: {
-                User: {
-                    id: `${user.id}`,
-                    username: user.username,
-                    email: user.email
-                }
+                logout: true
             }
         })
-    })
 
-    it("return null", async () => {
-
-        const response = await graphCall({
-            source: userQuery
-        })
-        expect(response).toMatchObject({
-            data: {
-                User: null
-            }
-        })
     })
 })
