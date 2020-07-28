@@ -8,7 +8,7 @@ import { env } from '../env.config';
 export const sendFakeEmail = async (email: string, isEmail: boolean, url: string) => {
 
     const testAccount = await nodemailer.createTestAccount()
-
+    console.log("confirmation url: " + url);
     let transporter = nodemailer.createTransport({
         host: "smtp.ethereal.email",
         port: 587,

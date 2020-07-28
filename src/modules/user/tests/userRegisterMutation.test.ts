@@ -14,9 +14,11 @@ afterAll(async () => {
     await connection.close()
 })
 
-const userQuery = `
-{
-  User {
+const registerMutation = `
+mutation Register($data: RegisterInput!) {
+  register(
+    data: $data
+  ) {
     id
     username
     email
@@ -24,39 +26,34 @@ const userQuery = `
 }
 `;
 
-describe("User", () => {
-    it("get user", async () => {
-        const user = await User.create({
+describe("Register", () => {
+    it("create user", async () => {
+        const user = {
             username: faker.internet.userName(),
             email: faker.internet.email(),
             password: faker.internet.password()
-        }).save()
-
+        }
         const response = await graphCall({
-            source: userQuery,
-            userId: user.id
+            source: registerMutation,
+            variableValues: {
+                data: user
+            }
         })
 
         expect(response).toMatchObject({
             data: {
-                User: {
-                    id: `${user.id}`,
+                register: {
                     username: user.username,
                     email: user.email
                 }
             }
         })
-    })
-    it("return null", async () => {
 
-        const response = await graphCall({
-            source: userQuery
+        const dbUser = await User.findOne({ where: { email: user.email } })
+        expect(dbUser).toBeDefined()
+        expect(dbUser!.confirmed).toBeFalsy()
+        expect(dbUser!.username).toBe(user.username)
+        expect(dbUser!.email).toBe(user.email)
 
-        })
-        expect(response).toMatchObject({
-            data: {
-                User: null
-            }
-        })
     })
 })

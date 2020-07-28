@@ -1,3 +1,4 @@
+import bcrypt from 'bcryptjs'
 import faker from 'faker'
 import { Connection } from "typeorm"
 import { User } from '../../../entity/users'
@@ -14,46 +15,48 @@ afterAll(async () => {
     await connection.close()
 })
 
-const registerMutation = `
-mutation Register($data: RegisterInput!) {
-  register(
+const loginMutation = `
+mutation Login($data: LoginInput!) {
+  login(
     data: $data
   ) {
     id
-    email
     username
+    email
   }
 }
 `;
 
-describe("Register", () => {
-    it("create user", async () => {
-        const user = {
+describe("Login", () => {
+    it("login user", async () => {
+        const password = faker.internet.password()
+        const user = await User.create({
             username: faker.internet.userName(),
             email: faker.internet.email(),
-            password: faker.internet.password()
-        }
+            password: await bcrypt.hash(password, 12),
+            confirmed: true
+        }).save()
+
         const response = await graphCall({
-            source: registerMutation,
+            source: loginMutation,
             variableValues: {
-                data: user
+                data: {
+                    username: user.username,
+                    email: user.email,
+                    password: password
+                }
             }
         })
 
         expect(response).toMatchObject({
             data: {
-                register: {
+                login: {
+                    id: `${user.id}`,
                     username: user.username,
                     email: user.email
                 }
             }
         })
-
-        const dbUser = await User.findOne({ where: { email: user.email } })
-        expect(dbUser).toBeDefined()
-        expect(dbUser!.confirmed).toBeFalsy()
-        expect(dbUser!.username).toBe(user.username)
-        expect(dbUser!.email).toBe(user.email)
 
     })
 })
