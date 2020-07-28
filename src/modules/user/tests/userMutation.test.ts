@@ -1,8 +1,8 @@
 import faker from 'faker'
 import { Connection } from "typeorm"
-import { User } from '../../entity/users'
-import { graphCall } from "../../test-utils/gCall"
-import { testConn } from "../../test-utils/testConfig"
+import { User } from '../../../entity/users'
+import { graphCall } from "../../../test-utils/gCall"
+import { testConn } from "../../../test-utils/testConfig"
 
 let connection: Connection
 
@@ -39,9 +39,6 @@ describe("Register", () => {
                 data: user
             }
         })
-
-        console.log(user)
-        console.log(response)
 
         expect(response).toMatchObject({
             data: {

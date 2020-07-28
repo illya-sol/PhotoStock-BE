@@ -1,10 +1,11 @@
 import { buildSchema } from "type-graphql"
 import { userauthChecker } from "../modules/auth/auth"
-import { resolvers } from '../modules/user/userResolvers'
+import { mutationResolvers } from '../modules/user/userMutationResolvers'
 
 export const createSchema = () => {
+    console.log("after")
     return buildSchema({
-        resolvers: resolvers,
+        resolvers: mutationResolvers,
         authChecker: userauthChecker
     })
 }
