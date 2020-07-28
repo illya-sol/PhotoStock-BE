@@ -5,13 +5,13 @@ import express from 'express'
 import session from 'express-session'
 import "reflect-metadata"
 import { createConnection } from "typeorm"
+import { env } from './env.config'
 import { redis } from './redis'
 import { createSchema } from './utils/createSchema'
 
 const main = async () => {
     await createConnection()
 
-    const env = require('./env.conf')
     const schema = await createSchema()
     const apolloServer = new ApolloServer({
         schema,

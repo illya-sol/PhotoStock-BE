@@ -1,5 +1,5 @@
 import bcrypt from 'bcryptjs'
-import { Arg, Ctx, Mutation, Resolver } from 'type-graphql'
+import { Arg, Authorized, Ctx, Mutation, Query, Resolver } from 'type-graphql'
 import { User } from '../../entity/users'
 import { redis } from '../../redis'
 import { createConfirmationUrl, createForgotPasswordUrl } from '../../utils/generateUrls'
@@ -9,6 +9,17 @@ import { reqContext } from '../types/context'
 import { changePasswordInput } from './inputs/changePasswordInput'
 import { LoginInput } from './inputs/loginInput'
 import { RegisterInput } from './inputs/registerInput'
+
+@Resolver()
+class UserResolver {
+    @Authorized()
+    @Query(() => User, { nullable: true })
+    async User(
+        @Ctx() ctx: reqContext
+    ): Promise<User | undefined> {
+        return User.findOne(ctx.req.session!.userId)
+    }
+}
 
 @Resolver()
 class RegisterResolver {
@@ -142,4 +153,4 @@ export class LogoutResolver {
     }
 }
 
-export const mutationResolvers = [LogoutResolver, ChangePasswordResolver, ForgotUserPasswordResolver, ConfirmUserResolver, LoginResolver, RegisterResolver] as const
+export const mutationResolvers = [UserResolver, LogoutResolver, ChangePasswordResolver, ForgotUserPasswordResolver, ConfirmUserResolver, LoginResolver, RegisterResolver] as const

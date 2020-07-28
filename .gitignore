@@ -1,5 +1,5 @@
 node_modules
-src/env.conf.js
+src/env.config.ts
 src/app.js
 ormconfig.json
 yarn-error.log

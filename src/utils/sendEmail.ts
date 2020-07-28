@@ -3,7 +3,7 @@ import fs from 'fs';
 import { JSDOM } from 'jsdom';
 import nodemailer from 'nodemailer';
 import path from 'path';
-const env = require('../env.conf')
+import { env } from '../env.config';
 
 export const sendFakeEmail = async (email: string, isEmail: boolean, url: string) => {
 
