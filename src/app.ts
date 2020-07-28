@@ -44,9 +44,7 @@ const main = async () => {
 
     //app.use before applying apollo-server middleware
     apolloServer.applyMiddleware({ app })
-    app.listen(env.port, (err: string) => {
-        if (err)
-            console.log(err)
+    app.listen(env.port, () => {
         console.log('Express apollo server started at port ' + env.port)
     })
 }
