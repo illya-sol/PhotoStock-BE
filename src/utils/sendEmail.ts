@@ -5,6 +5,43 @@ import nodemailer from 'nodemailer';
 import path from 'path';
 const env = require('../env.conf')
 
+export const sendFakeEmail = async (email: string, isEmail: boolean, url: string) => {
+
+    const testAccount = await nodemailer.createTestAccount()
+
+    let transporter = nodemailer.createTransport({
+        host: "smtp.ethereal.email",
+        port: 587,
+        secure: false,
+        auth: {
+            user: testAccount.user,
+            pass: testAccount.pass,
+        },
+    });
+
+    let htmlDOM
+
+    if (isEmail)
+        htmlDOM = new JSDOM(await fs.promises.readFile(path.join(__dirname, '../public/confEmail.html'), 'utf8'))
+    else
+        htmlDOM = new JSDOM(await fs.promises.readFile(path.join(__dirname, '../public/forgotPassword.html'), 'utf8'))
+
+    let atag = htmlDOM.window.document.getElementById('button_link') as HTMLAnchorElement
+    let ptag = htmlDOM.window.document.getElementById('text_link') as HTMLParagraphElement
+
+    atag.href = url
+    ptag.textContent = url
+
+    const options = {
+        from: env.emailLogin,
+        to: email,
+        subject: isEmail ? "Confirm Email ✔" : "Forgot Password ❓",
+        html: htmlDOM.window.document.body.innerHTML
+    }
+
+    await transporter.sendMail(options)
+}
+
 export const sendEmail = async (email: string, isEmail: boolean, url: string) => {
 
     const transporter = nodemailer.createTransport({

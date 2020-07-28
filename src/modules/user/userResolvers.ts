@@ -3,7 +3,7 @@ import { Arg, Authorized, Ctx, Mutation, Query, Resolver } from 'type-graphql'
 import { User } from '../../entity/users'
 import { redis } from '../../redis'
 import { createConfirmationUrl, createForgotPasswordUrl } from '../../utils/generateUrls'
-import { sendEmail } from '../../utils/sendEmail'
+import { sendFakeEmail } from '../../utils/sendEmail'
 import { confirmPrefix, forgotPasswordPrefix } from '../constants/redisPrefixes'
 import { reqContext } from '../types/context'
 import { changePasswordInput } from './inputs/changePasswordInput'
@@ -23,7 +23,6 @@ class UserResolver {
 
 @Resolver()
 class RegisterResolver {
-
     @Mutation(() => User)
     async register(
         @Arg("data") { username, email, password }: RegisterInput,
@@ -36,7 +35,7 @@ class RegisterResolver {
             email
         }).save()
 
-        await sendEmail(email, true, await createConfirmationUrl(user.id))
+        await sendFakeEmail(email, true, await createConfirmationUrl(user.id))
 
         return user
     }
@@ -103,7 +102,7 @@ class ForgotUserPasswordResolver {
         if (!user)
             return true
 
-        await sendEmail(user.email, false, await createForgotPasswordUrl(user.id))
+        await sendFakeEmail(user.email, false, await createForgotPasswordUrl(user.id))
 
         return true
     }
@@ -145,9 +144,10 @@ export class LogoutResolver {
             ctx.req.session!.destroy((err) => {
                 if (err) {
                     console.log(err)
-                    rej(false)
+                    return rej(false)
                 }
-                res(true)
+                ctx.res.clearCookie('qid')
+                return res(true)
             })
         })
     }
