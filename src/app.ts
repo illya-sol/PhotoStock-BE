@@ -19,7 +19,7 @@ const main = async () => {
         context: ({ req, res }) => ({ req, res }),
         validationRules: [
             queryComplexity({
-                maximumComplexity: 8,
+                maximumComplexity: 16,
                 estimators: [
                     fieldExtensionsEstimator(),
                     simpleEstimator({

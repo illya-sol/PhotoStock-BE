@@ -137,7 +137,7 @@ class ChangePasswordResolver {
 }
 
 @Resolver()
-export class LogoutResolver {
+class LogoutResolver {
     @Mutation(() => Boolean)
     async logout(@Ctx() ctx: reqContext): Promise<Boolean> {
         return new Promise((res, rej) => {
@@ -153,4 +153,4 @@ export class LogoutResolver {
     }
 }
 
-export const mutationResolvers = [UserResolver, LogoutResolver, ChangePasswordResolver, ForgotUserPasswordResolver, ConfirmUserResolver, LoginResolver, RegisterResolver] as const
+export const userMutationResolvers = [UserResolver, LogoutResolver, ChangePasswordResolver, ForgotUserPasswordResolver, ConfirmUserResolver, LoginResolver, RegisterResolver] as const
