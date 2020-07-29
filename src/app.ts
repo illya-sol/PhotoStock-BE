@@ -20,10 +20,6 @@ const main = async () => {
         validationRules: [
             queryComplexity({
                 maximumComplexity: 8,
-                // variables: {},
-                // onComplete: (complexity: number) => {
-                //     console.log("Query Complexity:", complexity);
-                // },
                 estimators: [
                     fieldExtensionsEstimator(),
                     simpleEstimator({
@@ -55,7 +51,7 @@ const main = async () => {
 
     app.use(cors({
         credentials: true,
-        origin: 'http://localhost:3000'
+        origin: env.FrontEndUrl
     }))
 
     //app.use before applying apollo-server middleware
