@@ -48,7 +48,8 @@ describe("Reset Password", () => {
                     password,
                     token
                 }
-            }
+            },
+            userId: user.id
         })
 
         expect(response).toMatchObject({

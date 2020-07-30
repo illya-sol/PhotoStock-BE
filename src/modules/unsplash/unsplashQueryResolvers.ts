@@ -1,4 +1,4 @@
-import { Arg, Query, Resolver } from "type-graphql";
+import { Arg, Authorized, Query, Resolver } from "type-graphql";
 import Unsplash, { toJson } from 'unsplash-js';
 import { env } from '../../env.config';
 import { unsplashInput, unsplashSearchInput } from './inputs/unsplashInputs';
@@ -12,7 +12,8 @@ const unsplash = new Unsplash({
 })
 
 @Resolver()
-class PhotoListResolver {
+class ListPhotoResolver {
+    @Authorized()
     @Query(() => [unsplashOutput], { nullable: true })
     async photoList(
         @Arg("data") { page, perPage, orderBy }: unsplashInput
@@ -29,6 +30,7 @@ class PhotoListResolver {
 
 @Resolver()
 export class SearchPhotoResolver {
+    @Authorized()
     @Query(() => [unsplashOutput], { nullable: true })
     async photoSearch(
         @Arg("data") { page, keyword, perPage }: unsplashSearchInput
@@ -43,4 +45,4 @@ export class SearchPhotoResolver {
     }
 }
 
-export const unsplashMutationResolvers = [PhotoListResolver, SearchPhotoResolver] as const
+export const unsplashMutationResolvers = [ListPhotoResolver, SearchPhotoResolver] as const

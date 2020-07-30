@@ -93,6 +93,7 @@ class ConfirmUserResolver {
 
 @Resolver()
 class ForgotUserPasswordResolver {
+    @Authorized()
     @Mutation(() => Boolean)
     async forgotPassword(
         @Arg("email") email: string
@@ -110,6 +111,7 @@ class ForgotUserPasswordResolver {
 
 @Resolver()
 class ChangePasswordResolver {
+    @Authorized()
     @Mutation(() => User, { nullable: true })
     async resetPassword(
         @Arg("data") { token, password }: changePasswordInput,
@@ -138,6 +140,7 @@ class ChangePasswordResolver {
 
 @Resolver()
 class LogoutResolver {
+    @Authorized()
     @Mutation(() => Boolean)
     async logout(@Ctx() ctx: reqContext): Promise<Boolean> {
         return new Promise((res, rej) => {
