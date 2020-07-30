@@ -29,7 +29,7 @@ mutation Login($data: changePasswordInput!) {
 `;
 
 describe("Reset Password", () => {
-    it("reset password", async () => {
+    it("should reset password", async () => {
         const password = faker.internet.password()
         const user = await User.create({
             username: faker.internet.userName(),

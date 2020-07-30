@@ -28,7 +28,7 @@ mutation Login($data: LoginInput!) {
 `;
 
 describe("Login", () => {
-    it("login user", async () => {
+    it("should login user", async () => {
         const password = faker.internet.password()
         const user = await User.create({
             username: faker.internet.userName(),

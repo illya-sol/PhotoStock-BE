@@ -23,11 +23,11 @@ export class unsplashUser {
     @Field()
     name!: string
 
-    @Field()
-    bio!: string
+    @Field({ nullable: true })
+    bio?: string
 
-    @Field()
-    location!: string
+    @Field({ nullable: true })
+    location?: string
 
     @Field()
     profile_image!: ImageSizes

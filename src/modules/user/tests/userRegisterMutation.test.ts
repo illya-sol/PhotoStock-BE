@@ -27,7 +27,7 @@ mutation Register($data: RegisterInput!) {
 `;
 
 describe("Register", () => {
-    it("create user", async () => {
+    it("should create user", async () => {
         const user = {
             username: faker.internet.userName(),
             email: faker.internet.email(),

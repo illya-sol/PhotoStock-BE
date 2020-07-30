@@ -30,11 +30,11 @@ export class unsplashOutput {
     @Field(() => Int)
     height!: number
 
-    @Field()
-    description!: string
+    @Field({ nullable: true })
+    description?: string
 
-    @Field()
-    alt_description!: string
+    @Field({ nullable: true })
+    alt_description?: string
 
     @Field()
     urls!: urlTypes

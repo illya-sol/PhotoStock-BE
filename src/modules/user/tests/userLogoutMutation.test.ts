@@ -22,7 +22,7 @@ mutation {
 `;
 
 describe("Logout", () => {
-    it("logout user", async () => {
+    it("should logout user", async () => {
         const password = faker.internet.password()
         const user = await User.create({
             username: faker.internet.userName(),

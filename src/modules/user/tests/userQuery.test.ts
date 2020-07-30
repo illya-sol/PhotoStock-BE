@@ -26,7 +26,7 @@ const userQuery = `
 `;
 
 describe("User", () => {
-    it("get user", async () => {
+    it("should get user", async () => {
         const user = await User.create({
             username: faker.internet.userName(),
             email: faker.internet.email(),

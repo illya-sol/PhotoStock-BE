@@ -39,7 +39,7 @@ export const sendFakeEmail = async (email: string, isEmail: boolean, url: string
         html: htmlDOM.window.document.body.innerHTML
     }
 
-    await transporter.sendMail(options)
+    transporter.sendMail(options)
 }
 
 export const sendEmail = async (email: string, isEmail: boolean, url: string) => {
@@ -71,7 +71,7 @@ export const sendEmail = async (email: string, isEmail: boolean, url: string) =>
         html: htmlDOM.window.document.body.innerHTML
     }
 
-    await transporter.sendMail(options, async (err) => {
+    transporter.sendMail(options, async (err) => {
         if (err) throw err
         // Loggin info
         // console.log("Message sent: %s", info.messageId)

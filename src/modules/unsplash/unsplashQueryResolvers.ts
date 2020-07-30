@@ -12,10 +12,10 @@ const unsplash = new Unsplash({
 })
 
 @Resolver()
-class ListPhotoResolver {
+class ListPhotosResolver {
     @Authorized()
     @Query(() => [unsplashOutput], { nullable: true })
-    async photoList(
+    async listPhotos(
         @Arg("data") { page, perPage, orderBy }: unsplashInput
     ): Promise<[unsplashOutput] | null> {
         return new Promise((res, rej) => {
@@ -45,4 +45,4 @@ export class SearchPhotoResolver {
     }
 }
 
-export const unsplashMutationResolvers = [ListPhotoResolver, SearchPhotoResolver] as const
+export const unsplashMutationResolvers = [ListPhotosResolver, SearchPhotoResolver] as const
