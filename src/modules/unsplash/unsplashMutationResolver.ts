@@ -1,7 +1,7 @@
 import { Arg, Query, Resolver } from "type-graphql";
 import Unsplash, { toJson } from 'unsplash-js';
 import { env } from '../../env.config';
-import { unsplashInput } from './inputs/unsplashInput';
+import { unsplashInput } from './inputs/unsplashInputs';
 import { unsplashOutput } from './inputs/unsplashOutput';
 
 global.fetch = require('node-fetch')
@@ -12,7 +12,7 @@ const unsplash = new Unsplash({
 })
 
 @Resolver()
-export class PhotoListResolver {
+class PhotoListResolver {
     @Query(() => [unsplashOutput], { nullable: true })
     async photoList(
         @Arg("data") { page, perPage, orderBy }: unsplashInput
@@ -26,5 +26,6 @@ export class PhotoListResolver {
         })
     }
 }
+
 
 export const unsplashMutationResolvers = [PhotoListResolver] as const
