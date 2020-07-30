@@ -25,21 +25,13 @@ query ListPhotos($data: unsplashInput!){
       width
       height
       description
-      alt_description
       urls{
-          raw
-          full
           regular
-          small
-          thumb
       }
       likes
       user {
           id
           username
-          name
-          bio
-          location
       }
     }
   }
