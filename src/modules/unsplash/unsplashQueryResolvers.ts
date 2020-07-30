@@ -32,7 +32,7 @@ class ListPhotosResolver {
 export class SearchPhotoResolver {
     @Authorized()
     @Query(() => [unsplashOutput], { nullable: true })
-    async photoSearch(
+    async searchPhotos(
         @Arg("data") { page, keyword, perPage }: unsplashSearchInput
     ): Promise<[unsplashOutput] | null> {
         return new Promise((res, rej) => {
