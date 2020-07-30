@@ -1,7 +1,7 @@
 import { Arg, Query, Resolver } from "type-graphql";
 import Unsplash, { toJson } from 'unsplash-js';
 import { env } from '../../env.config';
-import { unsplashInput } from './inputs/unsplashInputs';
+import { unsplashInput, unsplashSearchInput } from './inputs/unsplashInputs';
 import { unsplashOutput } from './inputs/unsplashOutput';
 
 global.fetch = require('node-fetch')
@@ -27,5 +27,20 @@ class PhotoListResolver {
     }
 }
 
+@Resolver()
+export class SearchPhotoResolver {
+    @Query(() => [unsplashOutput], { nullable: true })
+    async photoSearch(
+        @Arg("data") { page, keyword, perPage }: unsplashSearchInput
+    ): Promise<[unsplashOutput] | null> {
+        return new Promise((res, rej) => {
+            unsplash.search.photos(keyword, page, perPage).then(toJson).then(json => {
+                res(json.results as [unsplashOutput])
+            }).then(err => {
+                rej(err)
+            })
+        })
+    }
+}
 
-export const unsplashMutationResolvers = [PhotoListResolver] as const
+export const unsplashMutationResolvers = [PhotoListResolver, SearchPhotoResolver] as const

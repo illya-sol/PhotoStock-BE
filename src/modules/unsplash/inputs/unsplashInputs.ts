@@ -1,14 +1,14 @@
-import { Field, InputType } from "type-graphql";
+import { Field, InputType, Int } from "type-graphql";
 
 @InputType()
 export class unsplashInput {
-    @Field()
+    @Field(() => Int)
     page!: number
 
-    @Field()
+    @Field(() => Int)
     perPage!: number
 
-    @Field()
+    @Field({ nullable: true })
     orderBy?: string
 }
 
@@ -17,9 +17,9 @@ export class unsplashSearchInput {
     @Field()
     keyword!: string
 
-    @Field()
+    @Field(() => Int)
     page!: number
 
-    @Field()
+    @Field(() => Int)
     perPage!: number
 }
