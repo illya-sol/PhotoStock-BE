@@ -8,3 +8,5 @@ export class passwordInput {
 	@MaxLength(30)
 	password: string
 }
+
+Латыш Пидорас
